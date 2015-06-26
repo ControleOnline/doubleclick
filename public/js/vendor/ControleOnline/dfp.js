@@ -38,12 +38,14 @@ var DFP = function () {
             if (content) {
                 d.innerHTML = '<!-- ' + d.getAttribute('data-slot') + ' -->';
                 d.appendChild(content);
+                d.classList.remove('dfp');
+                d.classList.add('dfp-loaded');
             }
         }
     }
     replaceBanners();
 
-}
-document.addEventListener("DOMContentLoaded", function() {
-  DFP();
+};
+document.addEventListener("DOMContentLoaded", function () {
+    DFP();
 });
