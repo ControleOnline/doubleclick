@@ -11,6 +11,7 @@
  */
 chdir(dirname(__FILE__) . DIRECTORY_SEPARATOR . '../../../');
 require_once (dirname(__FILE__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php');
-$WPDoubleClick = \DoubleClick\WPDoubleClick::init();
+require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
+$WPDoubleClick = \DoubleClick\WPDoubleClick::init($wpdb);
 add_action('activated_plugin', array('\DoubleClick\WPDoubleClick', 'activateDoubleClick'), 10);
 add_action('deactivated_plugin', array('\DoubleClick\WPDoubleClick', 'deactivateDoubleClick'), 10);

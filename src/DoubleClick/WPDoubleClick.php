@@ -3,6 +3,7 @@
 namespace DoubleClick;
 
 use DoubleClick\Helper\Widget,
+    DoubleClick\Helper\Options,
     Zend\View\Model\ViewModel,
     Zend\View\Renderer\PhpRenderer,
     Zend\View\Resolver\AggregateResolver,
@@ -12,29 +13,47 @@ use DoubleClick\Helper\Widget,
 
 class WPDoubleClick {
 
+    protected static $wpdb;
+    protected static $options;
     protected static $render;
-    protected static $myOptions = array(
-        'OptimizeAdmin'
-    );
-    protected static $mySiteOptions = array(
-        'CookieLessDomain'
-    );
+    protected static $myOptions = array();
+    protected static $mySiteOptions = array();
 
-    public static function init() {
+    public static function init($wpdb) {
+        self::$wpdb = $wpdb;
+        self::$render = new PhpRenderer();
+        self::$options = self::getOptions();
+        self::getResolver(self::$render);
+
+        self::activateDoubleClick();
+
         wp_enqueue_script('DoubleClick', plugins_url('../public/js/vendor/ControleOnline/dfp.js', dirname(__FILE__)));
         add_action('widgets_init', create_function('', 'return register_widget("\DoubleClick\Helper\Widget");'));
-        self::$render = new PhpRenderer();
-        self::getResolver(self::$render);
-        if (filter_input(INPUT_POST, 'update_options')) {
-            self::update_options();
-        }
+
         if (is_admin()) {
+            wp_enqueue_style('DoubleClick', plugins_url('../public/css/vendor/ControleOnline/admin.css', dirname(__FILE__)));
             add_action('admin_menu', array('\DoubleClick\WPDoubleClick', 'menu'));
         }
     }
 
+    protected static function getOptions($force = false) {
+        if (!self::$options || $force) {
+            foreach (self::$myOptions as $option) {
+                $options[$option] = get_option($option);
+            }
+            self::$options = $options;
+        }
+        return self::$options;
+    }
+
+    public static function getPage($page, array $parameters = array()) {
+        $viewModel = new ViewModel($parameters);
+        $viewModel->setTerminal(true);
+        echo self::$render->partial('plugin/' . $page . '.phtml', $viewModel);
+    }
+
     public static function menu() {
-        add_options_page('Double Click', 'Double Click', 'manage_options', '', array('\DoubleClick\WPDoubleClick', 'plugin_options'));
+        add_options_page('Double Click', 'Double Click', 'manage_options', 'DoubleClick', array('\DoubleClick\WPDoubleClick', 'plugin_options'));
     }
 
     public static function deactivateDoubleClick() {
@@ -56,7 +75,18 @@ class WPDoubleClick {
     }
 
     public static function activateDoubleClick() {
-        
+        global $wpdb;
+        self::$wpdb = $wpdb;
+        $charset_collate = self::$wpdb->get_charset_collate();
+        $table_name = self::$wpdb->prefix . 'dfp_sizes';
+        $sql_create_table = "CREATE TABLE IF NOT EXISTS {$table_name} (
+            id bigint(20) unsigned NOT NULL auto_increment,
+            size varchar(50) NOT NULL,
+            width bigint(20) unsigned NOT NULL default '0',
+            height bigint(20) unsigned NOT NULL default '0',          
+            PRIMARY KEY  (id)          
+        ) $charset_collate; ";
+        \dbDelta($sql_create_table);
     }
 
     private static function getResolver($renderer) {
@@ -78,10 +108,21 @@ class WPDoubleClick {
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
-
-        $viewModel = new ViewModel(array('foo' => 'bar'));
-        $viewModel->setTerminal(true);
-        echo self::$render->partial('plugin/options.phtml', $viewModel);
+        Options::init(self::$wpdb);
+        self::$options['dfpSizes'] = Options::getSizes();
+        switch (filter_input(INPUT_GET, 'action')) {
+            case 'page':
+                self::getPage('page', self::$options);
+                break;
+            case'dfpSizes':
+                Options::addSizes();
+                self::$options['dfpSizes'] = Options::getSizes();
+                self::getPage('dfpSizes', self::$options);
+                break;
+            default:
+                self::getPage('options', self::$options);
+                break;
+        }
     }
 
 }
