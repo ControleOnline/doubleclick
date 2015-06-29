@@ -12,12 +12,12 @@ class Options {
         self::$post = filter_input_array(INPUT_POST);
     }
 
-    public static function getCategories($slot_id) {
-        $table_name = self::$wpdb->prefix . 'dfp_slots_category';
-        $categories = self::$wpdb->get_results("SELECT category_id FROM {$table_name} WHERE slot_id = '{$slot_id}'");
+    public static function getTaxonomy($slot_id, $taxonomy) {
+        $table_name = self::$wpdb->prefix . 'dfp_slots_taxonomy';
+        $categories = self::$wpdb->get_results("SELECT taxonomy_id FROM {$table_name} WHERE slot_id = '{$slot_id}' AND taxonomy_type='" . $taxonomy . "'");                                
         if ($categories) {
             foreach ($categories as $cat) {
-                $return[] = $cat->category_id;
+                $return[] = $cat->taxonomy_id;
             }
         }
         return isset($return) ? array_values($return) : array();
@@ -30,7 +30,7 @@ class Options {
 
     public static function getSlots() {
         $table_name = self::$wpdb->prefix . 'dfp_slots';
-        $table_sizes = self::$wpdb->prefix . 'dfp_sizes';                        
+        $table_sizes = self::$wpdb->prefix . 'dfp_sizes';
         return self::$wpdb->get_results("SELECT {$table_name}.*,{$table_sizes}.size FROM {$table_name} INNER JOIN {$table_sizes} ON ({$table_name}.size_id = {$table_sizes}.id)");
     }
 
@@ -45,19 +45,24 @@ class Options {
             if (self::$post['id']) {
                 self::$wpdb->update($table_name, array('dfp_id' => self::$post['dfp_id'], 'size_id' => self::$post['size_id'], 'slot' => self::$post['slot']), array('id' => self::$post['id']), array('%s', '%d', '%s'));
                 $id = self::$post['id'];
-                $table_name = self::$wpdb->prefix . 'dfp_slots_category';
+                $table_name = self::$wpdb->prefix . 'dfp_slots_taxonomy';
                 self::$wpdb->delete($table_name, array('slot_id' => $id));
             } else {
                 self::$wpdb->insert($table_name, array('dfp_id' => self::$post['dfp_id'], 'size_id' => self::$post['size_id'], 'slot' => self::$post['slot']), array('%s', '%d', '%s'));
                 $id = self::$wpdb->insert_id;
             }
-            $table_name = self::$wpdb->prefix . 'dfp_slots_category';
-            if (self::$post['post_category']) {
-                foreach (self::$post['post_category'] as $category) {
-                    self::$wpdb->insert($table_name, array('slot_id' => $id, 'category_id' => $category), array('%s', '%d', '%s'));
-                }
-            }
+            self::addTaxonomy($id, self::$post['post_category'], 'category');
+            self::addTaxonomy($id, self::$post['post_page'], 'page');
             \wp_redirect(admin_url('admin.php?page=DoubleClick'));
+        }
+    }
+
+    public static function addTaxonomy($slot_id, $data, $taxonomy_type) {
+        if ($data) {
+            $table_name = self::$wpdb->prefix . 'dfp_slots_taxonomy';
+            foreach ($data as $taxonomy) {
+                self::$wpdb->insert($table_name, array('taxonomy_type' => $taxonomy_type, 'slot_id' => $slot_id, 'taxonomy_id' => $taxonomy), array('%s', '%s', '%d', '%s'));
+            }
         }
     }
 

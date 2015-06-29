@@ -103,13 +103,14 @@ class WPDoubleClick {
         ) " . $charset_collate . ";";
         \dbDelta($sql_create_table);
 
-        $table_name = self::$wpdb->prefix . 'dfp_slots_category';
+        $table_name = self::$wpdb->prefix . 'dfp_slots_taxonomy';
         $sql_create_table = "CREATE TABLE IF NOT EXISTS {$table_name}  (
             id  int NOT NULL AUTO_INCREMENT ,
             slot_id  int NULL ,
-            category_id  int NULL ,
+            taxonomy_id  int NULL ,
+            taxonomy_type enum('category','page') NOT NULL,
             PRIMARY KEY (id),
-            UNIQUE KEY slot (slot_id,category_id)
+            UNIQUE KEY slot (slot_id,category_id,taxonomy_type)
         ) " . $charset_collate . ";";
         \dbDelta($sql_create_table);
     }
@@ -144,7 +145,8 @@ class WPDoubleClick {
                 $id = filter_input(INPUT_GET, 'id');
                 if ($id) {                    
                     self::$options['slot'] = Options::getSlot($id);
-                    self::$options['categories'] = Options::getCategories($id);
+                    self::$options['categories'] = Options::getTaxonomy($id,'category');
+                    self::$options['pages'] = Options::getTaxonomy($id,'page');
                 }                
                 self::getPage('slot', self::$options);
                 break;

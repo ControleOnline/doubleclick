@@ -51,7 +51,36 @@
                     <ul>                                                
                         <?php wp_category_checklist(null, null, $this->categories); ?>
                     </ul>
-                </td>
+                </td>                                                
+            </tr>                        
+            <tr valign="top">
+                <th scope="row">Páginas:</th>
+                <td>
+                    <ul>      
+                        <?php
+                        $pages = get_pages();
+                        if ($pages) {
+                            echo '<ul>';
+                            foreach ($pages as $page) {
+                                if (in_array($page->ID, $this->pages)) {
+                                    $checked = 'checked';
+                                } else {
+                                    $checked = '';
+                                }
+                                ?>
+                                <li id="page-<?= $page->ID ?>">
+                                    <label class="selectit">
+                                        <input value="<?= $page->ID ?>" type="checkbox" name="post_page[]" id="in-page-<?= $page->ID ?>" <?= $checked ?>>
+                                        <?= $page->post_title ?>
+                                    </label>
+                                </li>
+                                <?php
+                            }
+                            echo '</ul>';
+                        }
+                        ?>
+                    </ul>
+                </td>                                                
             </tr>                        
         </table>  
         <?php submit_button('Salvar'); ?>

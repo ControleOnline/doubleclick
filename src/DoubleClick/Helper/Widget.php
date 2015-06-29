@@ -23,32 +23,40 @@ class Widget extends \WP_Widget {
         parent::__construct('double-click', 'Double Click');
     }
 
-    private function getBannerByCategory($size_id, $category_id) {
+    private function getBannerByTaxonomy($size_id, $category_id, $taxonomy_type) {
         $table_name = self::$wpdb->prefix . 'dfp_slots';
         $table_sizes = self::$wpdb->prefix . 'dfp_sizes';
-        $table_categories = self::$wpdb->prefix . 'dfp_slots_category';
+        $table_taxonomy = self::$wpdb->prefix . 'dfp_slots_taxonomy';
         $result = self::$wpdb->get_results(
                 "SELECT {$table_name}.*,{$table_sizes}.size,{$table_sizes}.width,{$table_sizes}.height FROM {$table_name} 
                         INNER JOIN {$table_sizes}                             
                         ON ({$table_name}.size_id = {$table_sizes}.id)
-                        LEFT JOIN {$table_categories} 
-                        ON ({$table_categories}.slot_id = {$table_name}.id)
+                        LEFT JOIN {$table_taxonomy} 
+                        ON ({$table_taxonomy}.slot_id = {$table_name}.id)
                         WHERE {$table_name}.size_id ='" . $size_id . "'
-                        AND {$table_categories}.category_id = '" . $category_id . "'
+                        AND {$table_taxonomy}.taxonomy_id = '" . $category_id . "'
+                        AND {$table_taxonomy}.taxonomy_type = '" . $taxonomy_type . "'
                         "
         );
-        $banner['id'] = $result[0]->dfp_id;
-        $banner['size'] = '[' . $result[0]->width . ', ' . $result[0]->height . ']';
-        $banner['slot'] = $result[0]->slot;
-        return $banner;
+        if ($result) {
+            $banner['id'] = $result[0]->dfp_id;
+            $banner['size'] = '[' . $result[0]->width . ', ' . $result[0]->height . ']';
+            $banner['slot'] = $result[0]->slot;
+            return $banner;
+        }
     }
 
     private function getBanner($size_id) {
-        $categories = get_the_category();
-        if ($categories) {
+        $page_id = get_queried_object_id();
+        $categories = get_the_category();        
+        if ($page_id) {
+            $banner = $this->getBannerByTaxonomy($size_id, $page_id, 'page');
+        }        
+        if ($categories && !$banner) {            
             $category_id = $categories[0]->term_id;
-            return $this->getBannerByCategory($size_id, $category_id);
+            $banner = $this->getBannerByTaxonomy($size_id, $category_id, 'category');
         }
+        return $banner;
     }
 
     public function widget($args, $instance) {
