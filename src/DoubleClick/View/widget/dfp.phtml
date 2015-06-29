@@ -1,1 +1,5 @@
-<div class='dfp' data-id='<?= $this->id ?>' data-size='<?= $this->size ?>' data-slot='<?= $this->slot ?>'></div>
+<?php if ($this->id && $this->size && $this->slot) { ?>
+    <div class='dfp' data-id='<?= $this->id ?>' data-size='<?= $this->size ?>' data-slot='<?= $this->slot ?>'></div>
+<?php } else { ?>
+    <!-- Nenhum banner encontrado para este espaço -->
+<?php } ?>

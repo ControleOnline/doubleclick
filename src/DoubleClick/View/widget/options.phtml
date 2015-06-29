@@ -1,4 +1,22 @@
 <p>
     <label for="<?php echo $this->fields['id'] ?>"><?php _e('Title:'); ?></label>
-    <input class="widefat" id="<?php echo $this->fields['id'] ?>" name="<?php echo $this->fields['title']; ?>" type="text" value="<?php echo esc_attr($this->title); ?>" />        
+    <input class="widefat" id="<?php echo $this->fields['id'] ?>" name="<?php echo $this->fields['title']; ?>" type="text" value="<?php echo esc_attr($this->title); ?>" />
+    <select name="<?php echo $this->fields['size']; ?>">
+        <?php
+        if ($this->fields['sizes']) {
+            foreach ($this->fields['sizes'] as $slot) {
+                if ($this->size == $slot->id) {
+                    $selected = 'selected';
+                } else {
+                    $selected = '';
+                }
+                ?>
+                <option value="<?= $slot->id ?>"<?= $selected ?>><?= $slot->size ?></option>
+                <?php
+            }
+        }
+        ?>
+
+    </select>
+
 </p>

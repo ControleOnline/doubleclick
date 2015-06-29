@@ -12,19 +12,48 @@ use Zend\View\Model\ViewModel,
 class Widget extends \WP_Widget {
 
     protected static $render;
+    protected static $wpdb;
 
     function __construct() {
+        global $wpdb;
+        self::$wpdb = $wpdb;
         self::$render = new PhpRenderer();
         self::getResolver(self::$render);
+        Options::init(self::$wpdb);
         parent::__construct('double-click', 'Double Click');
     }
 
+    private function getBannerByCategory($size_id, $category_id) {
+        $table_name = self::$wpdb->prefix . 'dfp_slots';
+        $table_sizes = self::$wpdb->prefix . 'dfp_sizes';
+        $table_categories = self::$wpdb->prefix . 'dfp_slots_category';
+        $result = self::$wpdb->get_results(
+                "SELECT {$table_name}.*,{$table_sizes}.size,{$table_sizes}.width,{$table_sizes}.height FROM {$table_name} 
+                        INNER JOIN {$table_sizes}                             
+                        ON ({$table_name}.size_id = {$table_sizes}.id)
+                        LEFT JOIN {$table_categories} 
+                        ON ({$table_categories}.slot_id = {$table_name}.id)
+                        WHERE {$table_name}.size_id ='" . $size_id . "'
+                        AND {$table_categories}.category_id = '" . $category_id . "'
+                        "
+        );
+        $banner['id'] = $result[0]->dfp_id;
+        $banner['size'] = '[' . $result[0]->width . ', ' . $result[0]->height . ']';
+        $banner['slot'] = $result[0]->slot;
+        return $banner;
+    }
+
+    private function getBanner($size_id) {
+        $categories = get_the_category();
+        if ($categories) {
+            $category_id = $categories[0]->term_id;
+            return $this->getBannerByCategory($size_id, $category_id);
+        }
+    }
+
     public function widget($args, $instance) {
-        
-        $instance['id'] = 'div-gpt-ad-1433947640153-3';
-        $instance['size'] = '[728, 90]';
-        $instance['slot'] = '/18835487/ativo_beats_728x90_superbanner';
-        $viewModel = new ViewModel($instance);
+        $banner = $this->getBanner($instance['size']);
+        $viewModel = new ViewModel($banner);
         $viewModel->setTerminal(true);
         echo self::$render->partial('widget/dfp.phtml', $viewModel);
     }
@@ -38,8 +67,10 @@ class Widget extends \WP_Widget {
      * @return array $instancia Dados atualizados a serem salvos no banco de dados
      */
     public function update($new_instance, $old_instance) {
+
         $instance = array();
         $instance['title'] = (!empty($new_instance['title']) ) ? strip_tags($new_instance['title']) : '';
+        $instance['size'] = (!empty($new_instance['size']) ) ? strip_tags($new_instance['size']) : '';
         return $instance;
     }
 
@@ -51,6 +82,8 @@ class Widget extends \WP_Widget {
     public function form($instance) {
         $instance['fields']['title'] = $this->get_field_name('title');
         $instance['fields']['id'] = $this->get_field_id('title');
+        $instance['fields']['size'] = $this->get_field_name('size');
+        $instance['fields']['sizes'] = Options::getSizes();
         $viewModel = new ViewModel($instance);
         $viewModel->setTerminal(true);
         echo self::$render->partial('widget/options.phtml', $viewModel);

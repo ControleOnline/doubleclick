@@ -76,7 +76,11 @@ class WPDoubleClick {
 
     public static function activateDoubleClick() {
         global $wpdb;
+        $blog_id = get_current_blog_id();
         self::$wpdb = $wpdb;
+        self::$wpdb->prefix = self::$wpdb->prefix . ($blog_id > 1 ? $blog_id . '_' : '');
+        self::$wpdb->base_prefix = self::$wpdb->prefix;
+
         $charset_collate = self::$wpdb->get_charset_collate();
         $table_name = self::$wpdb->prefix . 'dfp_sizes';
         $sql_create_table = "CREATE TABLE IF NOT EXISTS {$table_name} (
@@ -85,7 +89,28 @@ class WPDoubleClick {
             width bigint(20) unsigned NOT NULL default '0',
             height bigint(20) unsigned NOT NULL default '0',          
             PRIMARY KEY  (id)          
-        ) $charset_collate; ";
+        ) " . $charset_collate . ";";
+        \dbDelta($sql_create_table);
+
+        $table_name = self::$wpdb->prefix . 'dfp_slots';
+        $sql_create_table = "CREATE TABLE IF NOT EXISTS {$table_name} (
+            id bigint(20) unsigned NOT NULL auto_increment,
+            slot  varchar(50) NOT NULL ,
+            size_id int NULL ,
+            dfp_id varchar(50) NOT NULL ,
+            PRIMARY KEY (id),
+            UNIQUE KEY dfp_id (size_id,dfp_id)
+        ) " . $charset_collate . ";";
+        \dbDelta($sql_create_table);
+
+        $table_name = self::$wpdb->prefix . 'dfp_slots_category';
+        $sql_create_table = "CREATE TABLE IF NOT EXISTS {$table_name}  (
+            id  int NOT NULL AUTO_INCREMENT ,
+            slot_id  int NULL ,
+            category_id  int NULL ,
+            PRIMARY KEY (id),
+            UNIQUE KEY slot (slot_id,category_id)
+        ) " . $charset_collate . ";";
         \dbDelta($sql_create_table);
     }
 
@@ -108,11 +133,20 @@ class WPDoubleClick {
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
+
+        self::activateDoubleClick();
+
         Options::init(self::$wpdb);
         self::$options['dfpSizes'] = Options::getSizes();
         switch (filter_input(INPUT_GET, 'action')) {
-            case 'page':
-                self::getPage('page', self::$options);
+            case 'slot':
+                Options::addSlots();
+                $id = filter_input(INPUT_GET, 'id');
+                if ($id) {                    
+                    self::$options['slot'] = Options::getSlot($id);
+                    self::$options['categories'] = Options::getCategories($id);
+                }                
+                self::getPage('slot', self::$options);
                 break;
             case'dfpSizes':
                 Options::addSizes();
@@ -120,6 +154,7 @@ class WPDoubleClick {
                 self::getPage('dfpSizes', self::$options);
                 break;
             default:
+                self::$options['slots'] = Options::getSlots();                                                
                 self::getPage('options', self::$options);
                 break;
         }

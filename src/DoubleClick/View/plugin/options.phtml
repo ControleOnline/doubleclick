@@ -6,34 +6,41 @@
     </ul>
 </nav>
 <div class="wrap">
-    <h2>Settings</h2>    
+    <h2>Double Click</h2>    
+    <form method="post" action="<?= $_SERVER['REQUEST_URI'] ?>&action=dfpSizes">     
+        <?php submit_button('Adicionar Tamanhos'); ?>
+    </form>
+    <form method="post" action="<?= $_SERVER['REQUEST_URI'] ?>&action=slot">
+        <?= submit_button('Adicionar Slots'); ?>
+    </form>
 </div>
 <div class="wrap">
-    <h2>Double Click</h2>    
-    <table class="form-table">
-        <tr valign="top">
-        <form method="post" action="<?= $_SERVER['REQUEST_URI'] ?>&action=dfpSizes">        
-            <th scope="row">Peças</th>
-            <td>                    
-                <?php print_r($this->dfpSizes); ?>
-            </td>
-            <td>                    
-                <?php submit_button('Adicionar Peça'); ?>
-            </td>
-        </form>
-        </tr>
-        <tr valign="top">
-        <form method="post" action="<?= $_SERVER['REQUEST_URI'] ?>&action=page">        
-            <th scope="row">Paginas:</th>
-            <td>                    
-                Páginas Aqui
-            </td>
-            <td>
-                <?php submit_button('Adicionar Peça'); ?>
+    <h2>Peças</h2>    
+    <table class="form-table">        
+        <?php
+        if ($this->slots) {
+            foreach ($this->slots as $slot) {
+                ?>
+                <tr valign="top">                    
+                    <td>
+                        <?= $slot->dfp_id ?>
+                    </td>
+                    <td>                    
+                        <?= $slot->slot ?>
+                    </td>
+                    <td>                    
+                        <?= $slot->size ?>
+                    </td>
+                    <td>
+                        <form method="post" action="<?= $_SERVER['REQUEST_URI'] ?>&action=slot&id=<?= $slot->id ?>">
+                            <?= submit_button('Editar'); ?>
+                        </form>
+                    </td>
 
-            </td>
-        </form>
-        </tr>                        
+                </tr>     
+                <?php
+            }
+        }
+        ?>
     </table>  
-
 </div>
