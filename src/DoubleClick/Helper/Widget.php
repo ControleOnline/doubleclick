@@ -48,12 +48,12 @@ class Widget extends \WP_Widget {
 
     private function getBanner($size_id) {
         $page_id = get_queried_object_id();
-        $categories = get_the_category();        
+        $categories = get_query_var('cat')? : get_the_category();        
         if ($page_id) {
             $banner = $this->getBannerByTaxonomy($size_id, $page_id, 'page');
-        }        
-        if ($categories && !$banner) {            
-            $category_id = $categories[0]->term_id;
+        }
+        if ($categories && !$banner) {
+            $category_id = is_array($categories) ? $categories[0]->term_id : $categories;            
             $banner = $this->getBannerByTaxonomy($size_id, $category_id, 'category');
         }
         return $banner;
