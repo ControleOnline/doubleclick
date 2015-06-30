@@ -62,7 +62,7 @@
                         if ($pages) {
                             echo '<ul>';
                             foreach ($pages as $page) {
-                                if (in_array($page->ID, $this->pages)) {
+                                if (is_array($this->pages) && in_array($page->ID, $this->pages)) {
                                     $checked = 'checked';
                                 } else {
                                     $checked = '';
@@ -96,7 +96,7 @@
                         if ($pages) {
                             echo '<ul>';
                             foreach ($pages as $page) {
-                                if (in_array($page['id'], $this->special)) {
+                                if (is_array($this->special) && in_array($page['id'], $this->special)) {
                                     $checked = 'checked';
                                 } else {
                                     $checked = '';

@@ -61,12 +61,13 @@ class Widget extends \WP_Widget {
                 $banner = $this->getBannerByTaxonomy($size_id, $category_id, 'category');
             }
         }
-        $return = $banner? : $this->getBannerByTaxonomy($size_id, 2, 'special');
-        return array_merge($return, array('size_details' => $this->getBanner($size_id)));
+        $return = $banner? : ($this->getBannerByTaxonomy($size_id, 2, 'special')? : array());                
+        $return['size_details'] = $this->getSize($size_id);        
+        return $return;        
     }
 
     public function getSize($size_id) {
-        $table_name = self::$wpdb->prefix . 'dfp_sizes';
+        $table_name = self::$wpdb->prefix . 'dfp_sizes';        
         return self::$wpdb->get_row("SELECT * FROM {$table_name} WHERE id = '{$size_id}'");
     }
 
