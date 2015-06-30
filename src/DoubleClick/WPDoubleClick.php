@@ -24,16 +24,14 @@ class WPDoubleClick {
         self::$render = new PhpRenderer();
         self::$options = self::getOptions();
         self::getResolver(self::$render);
-
         self::activateDoubleClick();
-
-        wp_enqueue_script('DoubleClick', plugins_url('../public/js/vendor/ControleOnline/dfp.js', dirname(__FILE__)));
-        add_action('widgets_init', create_function('', 'return register_widget("\DoubleClick\Helper\Widget");'));
-
         if (is_admin()) {
+            wp_enqueue_script('DoubleClick', plugins_url('../public/js/vendor/ControleOnline/admin.js', dirname(__FILE__)));
             wp_enqueue_style('DoubleClick', plugins_url('../public/css/vendor/ControleOnline/admin.css', dirname(__FILE__)));
             add_action('admin_menu', array('\DoubleClick\WPDoubleClick', 'menu'));
         }
+        wp_enqueue_script('DoubleClick', plugins_url('../public/js/vendor/ControleOnline/dfp.js', dirname(__FILE__)));
+        add_action('widgets_init', create_function('', 'return register_widget("\DoubleClick\Helper\Widget");'));
     }
 
     protected static function getOptions($force = false) {
@@ -108,7 +106,7 @@ class WPDoubleClick {
             id  int NOT NULL AUTO_INCREMENT ,
             slot_id  int NULL ,
             taxonomy_id  int NULL ,
-            taxonomy_type enum('category','page') NOT NULL,
+            taxonomy_type enum('category','page','special') NOT NULL,
             PRIMARY KEY (id),
             UNIQUE KEY slot (slot_id,category_id,taxonomy_type)
         ) " . $charset_collate . ";";
@@ -143,11 +141,12 @@ class WPDoubleClick {
             case 'slot':
                 Options::addSlots();
                 $id = filter_input(INPUT_GET, 'id');
-                if ($id) {                    
+                if ($id) {
                     self::$options['slot'] = Options::getSlot($id);
-                    self::$options['categories'] = Options::getTaxonomy($id,'category');
-                    self::$options['pages'] = Options::getTaxonomy($id,'page');
-                }                
+                    self::$options['categories'] = Options::getTaxonomy($id, 'category');
+                    self::$options['pages'] = Options::getTaxonomy($id, 'page');
+                    self::$options['special'] = Options::getTaxonomy($id, 'special');
+                }
                 self::getPage('slot', self::$options);
                 break;
             case'dfpSizes':
@@ -156,7 +155,7 @@ class WPDoubleClick {
                 self::getPage('dfpSizes', self::$options);
                 break;
             default:
-                self::$options['slots'] = Options::getSlots();                                                
+                self::$options['slots'] = Options::getSlots();
                 self::getPage('options', self::$options);
                 break;
         }

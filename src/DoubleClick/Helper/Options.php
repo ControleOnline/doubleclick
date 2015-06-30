@@ -14,7 +14,7 @@ class Options {
 
     public static function getTaxonomy($slot_id, $taxonomy) {
         $table_name = self::$wpdb->prefix . 'dfp_slots_taxonomy';
-        $categories = self::$wpdb->get_results("SELECT taxonomy_id FROM {$table_name} WHERE slot_id = '{$slot_id}' AND taxonomy_type='" . $taxonomy . "'");                                
+        $categories = self::$wpdb->get_results("SELECT taxonomy_id FROM {$table_name} WHERE slot_id = '{$slot_id}' AND taxonomy_type='" . $taxonomy . "'");
         if ($categories) {
             foreach ($categories as $cat) {
                 $return[] = $cat->taxonomy_id;
@@ -53,6 +53,7 @@ class Options {
             }
             self::addTaxonomy($id, self::$post['post_category'], 'category');
             self::addTaxonomy($id, self::$post['post_page'], 'page');
+            self::addTaxonomy($id, self::$post['post_special'], 'special');
             \wp_redirect(admin_url('admin.php?page=DoubleClick'));
         }
     }

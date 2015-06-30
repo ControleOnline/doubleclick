@@ -47,16 +47,27 @@ class Widget extends \WP_Widget {
     }
 
     private function getBanner($size_id) {
-        $page_id = get_queried_object_id();
-        $categories = get_query_var('cat')? : get_the_category();        
-        if ($page_id) {
-            $banner = $this->getBannerByTaxonomy($size_id, $page_id, 'page');
+        if (is_home()) {
+            $banner = $this->getBannerByTaxonomy($size_id, 1, 'special');
         }
-        if ($categories && !$banner) {
-            $category_id = is_array($categories) ? $categories[0]->term_id : $categories;            
-            $banner = $this->getBannerByTaxonomy($size_id, $category_id, 'category');
+        if (!$banner) {
+            $page_id = get_queried_object_id();
+            $categories = get_query_var('cat')? : get_the_category();
+            if ($page_id) {
+                $banner = $this->getBannerByTaxonomy($size_id, $page_id, 'page');
+            }
+            if ($categories && !$banner) {
+                $category_id = is_array($categories) ? $categories[0]->term_id : $categories;
+                $banner = $this->getBannerByTaxonomy($size_id, $category_id, 'category');
+            }
         }
-        return $banner;
+        $return = $banner? : $this->getBannerByTaxonomy($size_id, 2, 'special');
+        return array_merge($return, array('size_details' => $this->getBanner($size_id)));
+    }
+
+    public function getSize($size_id) {
+        $table_name = self::$wpdb->prefix . 'dfp_sizes';
+        return self::$wpdb->get_row("SELECT * FROM {$table_name} WHERE id = '{$size_id}'");
     }
 
     public function widget($args, $instance) {
@@ -79,6 +90,9 @@ class Widget extends \WP_Widget {
         $instance = array();
         $instance['title'] = (!empty($new_instance['title']) ) ? strip_tags($new_instance['title']) : '';
         $instance['size'] = (!empty($new_instance['size']) ) ? strip_tags($new_instance['size']) : '';
+        $instance['min_width'] = (!empty($new_instance['min_width']) ) ? strip_tags($new_instance['min_width']) : '';
+        $instance['max_width'] = (!empty($new_instance['max_width']) ) ? strip_tags($new_instance['max_width']) : '';
+
         return $instance;
     }
 
@@ -91,6 +105,8 @@ class Widget extends \WP_Widget {
         $instance['fields']['title'] = $this->get_field_name('title');
         $instance['fields']['id'] = $this->get_field_id('title');
         $instance['fields']['size'] = $this->get_field_name('size');
+        $instance['fields']['min_width'] = $this->get_field_name('min_width');
+        $instance['fields']['max_width'] = $this->get_field_name('max_width');
         $instance['fields']['sizes'] = Options::getSizes();
         $viewModel = new ViewModel($instance);
         $viewModel->setTerminal(true);

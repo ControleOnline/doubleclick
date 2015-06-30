@@ -81,7 +81,43 @@
                         ?>
                     </ul>
                 </td>                                                
-            </tr>                        
+            </tr>     
+
+
+            <tr valign="top">
+                <th scope="row">Páginas Especiais:</th>
+                <td>
+                    <ul>      
+                        <?php
+                        $pages = array(
+                            1 => array('id' => 1, 'name' => 'Home'),
+                            2 => array('id' => 2, 'name' => 'Padrão'),
+                        );
+                        if ($pages) {
+                            echo '<ul>';
+                            foreach ($pages as $page) {
+                                if (in_array($page['id'], $this->special)) {
+                                    $checked = 'checked';
+                                } else {
+                                    $checked = '';
+                                }
+                                ?>
+                                <li id="page-<?= $page['id'] ?>">
+                                    <label class="selectit">
+                                        <input value="<?= $page['id'] ?>" type="checkbox" name="post_special[]" id="in-special-<?= $page['id'] ?>" <?= $checked ?>>
+                                        <?= $page['name'] ?>
+                                    </label>
+                                </li>
+                                <?php
+                            }
+                            echo '</ul>';
+                        }
+                        ?>
+                    </ul>
+                </td>                                                
+            </tr>    
+
+
         </table>  
         <?php submit_button('Salvar'); ?>
     </form>
