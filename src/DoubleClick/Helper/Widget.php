@@ -61,18 +61,20 @@ class Widget extends \WP_Widget {
                 $banner = $this->getBannerByTaxonomy($size_id, $category_id, 'category');
             }
         }
-        $return = $banner? : ($this->getBannerByTaxonomy($size_id, 2, 'special')? : array());                
-        $return['size_details'] = $this->getSize($size_id);        
-        return $return;        
+        $return = $banner? : ($this->getBannerByTaxonomy($size_id, 2, 'special')? : array());
+        $return['size_details'] = $this->getSize($size_id);
+        return $return;
     }
 
     public function getSize($size_id) {
-        $table_name = self::$wpdb->prefix . 'dfp_sizes';        
+        $table_name = self::$wpdb->prefix . 'dfp_sizes';
         return self::$wpdb->get_row("SELECT * FROM {$table_name} WHERE id = '{$size_id}'");
     }
 
     public function widget($args, $instance) {
         $banner = $this->getBanner($instance['size']);
+        $banner['min_width'] = $instance['min_width'];
+        $banner['max_width'] = $instance['max_width'];
         $viewModel = new ViewModel($banner);
         $viewModel->setTerminal(true);
         echo self::$render->partial('widget/dfp.phtml', $viewModel);

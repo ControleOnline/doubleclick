@@ -98,9 +98,9 @@ class WPDoubleClick {
         $table_name = self::$wpdb->prefix . 'dfp_slots';
         $sql_create_table = "CREATE TABLE IF NOT EXISTS {$table_name} (
             id bigint(20) unsigned NOT NULL auto_increment,
-            slot  varchar(50) NOT NULL ,
+            slot  varchar(255) NOT NULL ,
             size_id int NULL ,
-            dfp_id varchar(50) NOT NULL ,
+            dfp_id varchar(255) NOT NULL ,
             PRIMARY KEY (id),
             UNIQUE KEY dfp_id (size_id,dfp_id)
         ) " . $charset_collate . ";";
@@ -113,7 +113,7 @@ class WPDoubleClick {
             taxonomy_id  int NULL ,
             taxonomy_type enum('category','page','special') NOT NULL,
             PRIMARY KEY (id),
-            UNIQUE KEY slot (slot_id,category_id,taxonomy_type)
+            UNIQUE KEY slot (slot_id,taxonomy_id,taxonomy_type)
         ) " . $charset_collate . ";";
         \dbDelta($sql_create_table);
     }

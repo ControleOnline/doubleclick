@@ -41,7 +41,7 @@ class Options {
 
     public static function addSlots() {
         $table_name = self::$wpdb->prefix . 'dfp_slots';
-        if (self::$post['size_id'] && self::$post['slot'] && self::$post['post_category'] && self::$post['dfp_id']) {
+        if (self::$post['size_id'] && self::$post['slot'] && self::$post['dfp_id']) {
             if (self::$post['id']) {
                 self::$wpdb->update($table_name, array('dfp_id' => self::$post['dfp_id'], 'size_id' => self::$post['size_id'], 'slot' => self::$post['slot']), array('id' => self::$post['id']), array('%s', '%d', '%s'));
                 $id = self::$post['id'];
