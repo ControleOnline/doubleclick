@@ -21,20 +21,22 @@ var DFP = {
         var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
         if (w >= min_width && (max_width === '0' || w <= max_width)) {
             if (size[0] <= w && size[1] <= h) {
-                var d = document.createElement('div'), slotType;
+                var d = document.createElement('div'), s = document.createElement('script'), slotType;
+                s.setAttribute('type', 'text/javascript');
                 d.setAttribute('id', dfp_id);
                 if (size[0] > 1 && size[1] > 1) {
-                    slotType = 'defineSlot';
                     d.setAttribute('style', 'width:' + size[0] + 'px; height:' + size[1] + 'px;');
-                } else {                    
+                    s.innerHTML = 'googletag.cmd.push(function() { ' +
+                            'googletag.defineSlot(\'' + slot + '\', [' + size[0] + ',' + size[1] + '], \'' + dfp_id + '\').addService(googletag.pubads());' +
+                            'googletag.display(\'' + dfp_id + '\');' +
+                            '});';
+                } else {
+                    s.innerHTML = 'googletag.cmd.push(function() { ' +
+                            'googletag.defineOutOfPageSlot(\'' + slot + '\', \'' + dfp_id + '\').addService(googletag.pubads());' +
+                            'googletag.display(\'' + dfp_id + '\');' +
+                            '});';
                     slotType = 'defineOutOfPageSlot';
                 }
-                var s = document.createElement('script');
-                s.setAttribute('type', 'text/javascript');
-                s.innerHTML = 'googletag.cmd.push(function() { ' +
-                        'googletag.' + slotType + '(\'' + slot + '\', [' + size[0] + ',' + size[1] + '], \'' + dfp_id + '\').addService(googletag.pubads());' +
-                        'googletag.display(\'' + dfp_id + '\');' +
-                        '});';
                 d.appendChild(s);
                 return d;
             }
@@ -49,11 +51,9 @@ var DFP = {
                 if (!d.innerHTML) {
                     d.innerHTML = '<!-- ' + d.getAttribute('data-slot') + ' -->';
                     d.appendChild(content);
-                    //d.classList.add('dfp-loaded');
-                    //d.classList.remove('dfp');
                 }
             } else {
-                d.parentNode.removeChild(d);
+                d.innerHTML = '<!-- Nenhum conteúdo para exibir aqui nesta resolução -->';
             }
         }
     }
