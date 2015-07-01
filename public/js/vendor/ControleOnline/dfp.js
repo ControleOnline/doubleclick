@@ -21,24 +21,35 @@ var DFP = {
         var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
         if (w >= min_width && (max_width === '0' || w <= max_width)) {
             if (size[0] <= w && size[1] <= h) {
-                var d = document.createElement('div'), s = document.createElement('script'), slotType;
+                var d = document.createElement('div'),
+                        c = document.createElement('div'),
+                        s = document.createElement('script'),
+                        b = document.getElementsByTagName("body")[0];
                 s.setAttribute('type', 'text/javascript');
                 d.setAttribute('id', dfp_id);
+
                 if (size[0] > 1 && size[1] > 1) {
                     d.setAttribute('style', 'width:' + size[0] + 'px; height:' + size[1] + 'px;');
                     s.innerHTML = 'googletag.cmd.push(function() { ' +
                             'googletag.defineSlot(\'' + slot + '\', [' + size[0] + ',' + size[1] + '], \'' + dfp_id + '\').addService(googletag.pubads());' +
                             'googletag.display(\'' + dfp_id + '\');' +
                             '});';
+                    d.appendChild(s);
+                    return d;
                 } else {
                     s.innerHTML = 'googletag.cmd.push(function() { ' +
                             'googletag.defineOutOfPageSlot(\'' + slot + '\', \'' + dfp_id + '\').addService(googletag.pubads());' +
                             'googletag.display(\'' + dfp_id + '\');' +
                             '});';
-                    slotType = 'defineOutOfPageSlot';
+                    //d.setAttribute('style', 'width:' + size[0] + 'px; height:' + size[1] + 'px;');
+                    d.appendChild(s);
+                    b.insertAdjacentHTML('afterbegin', '<!-- ' + slot + ' -->');
+                    //c.appendChild(d);
+                    //d.classList.add('wraper-dhtml');
+                    //d.classList.add('dfp');                    
+                    b.insertBefore(s, b.firstChild.nextSibling);
+
                 }
-                d.appendChild(s);
-                return d;
             }
         }
     },
