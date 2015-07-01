@@ -31,12 +31,12 @@ class Options {
     public static function getSlots() {
         $table_name = self::$wpdb->prefix . 'dfp_slots';
         $table_sizes = self::$wpdb->prefix . 'dfp_sizes';
-        return self::$wpdb->get_results("SELECT {$table_name}.*,{$table_sizes}.size FROM {$table_name} INNER JOIN {$table_sizes} ON ({$table_name}.size_id = {$table_sizes}.id)");
+        return self::$wpdb->get_results("SELECT {$table_name}.*,{$table_sizes}.size FROM {$table_name} INNER JOIN {$table_sizes} ON ({$table_name}.size_id = {$table_sizes}.id) ORDER BY {$table_sizes}.size");
     }
 
     public static function getSizes() {
         $table_name = self::$wpdb->prefix . 'dfp_sizes';
-        return self::$wpdb->get_results("SELECT * FROM {$table_name}");
+        return self::$wpdb->get_results("SELECT * FROM {$table_name} ORDER BY size");
     }
 
     public static function addSlots() {
