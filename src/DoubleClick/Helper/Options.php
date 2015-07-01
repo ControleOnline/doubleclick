@@ -41,7 +41,10 @@ class Options {
 
     public static function addSlots() {
         $table_name = self::$wpdb->prefix . 'dfp_slots';
-        if (self::$post['size_id'] && self::$post['slot'] && self::$post['dfp_id']) {
+        if (self::$post['delete']) {
+            self::$wpdb->delete($table_name, array('id' => self::$post['slot_id']), array('%d'));
+            \wp_redirect(admin_url('admin.php?page=DoubleClick'));
+        } elseif (self::$post['size_id'] && self::$post['slot'] && self::$post['dfp_id']) {
             if (self::$post['id']) {
                 self::$wpdb->update($table_name, array('dfp_id' => self::$post['dfp_id'], 'size_id' => self::$post['size_id'], 'slot' => self::$post['slot']), array('id' => self::$post['id']), array('%s', '%d', '%s'));
                 $id = self::$post['id'];

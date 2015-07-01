@@ -26,7 +26,7 @@ var DFP = {
                 if (size[0] > 1 && size[1] > 1) {
                     slotType = 'defineSlot';
                     d.setAttribute('style', 'width:' + size[0] + 'px; height:' + size[1] + 'px;');
-                } else {
+                } else {                    
                     slotType = 'defineOutOfPageSlot';
                 }
                 var s = document.createElement('script');

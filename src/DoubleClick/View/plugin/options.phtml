@@ -36,6 +36,13 @@
                             <?= submit_button('Editar'); ?>
                         </form>
                     </td>
+                    <td>
+                        <form method="post" action="<?= $_SERVER['REQUEST_URI'] ?>&action=slot">
+                            <input type="hidden" name="delete" value="true"/>
+                            <input type="hidden" name="slot_id" value="<?= $slot->id ?>"/>
+                            <?= submit_button('Excluir'); ?>
+                        </form>
+                    </td>
 
                 </tr>     
                 <?php
