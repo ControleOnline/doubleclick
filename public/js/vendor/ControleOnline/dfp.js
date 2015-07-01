@@ -21,15 +21,18 @@ var DFP = {
         var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
         if (w >= min_width && (max_width === '0' || w <= max_width)) {
             if (size[0] <= w && size[1] <= h) {
-                var d = document.createElement('div');
+                var d = document.createElement('div'), slotType;
                 d.setAttribute('id', dfp_id);
                 if (size[0] > 1 && size[1] > 1) {
+                    slotType = 'defineSlot';
                     d.setAttribute('style', 'width:' + size[0] + 'px; height:' + size[1] + 'px;');
+                } else {
+                    slotType = 'defineOutOfPageSlot';
                 }
                 var s = document.createElement('script');
                 s.setAttribute('type', 'text/javascript');
                 s.innerHTML = 'googletag.cmd.push(function() { ' +
-                        'googletag.defineSlot(\'' + slot + '\', [' + size[0] + ',' + size[1] + '], \'' + dfp_id + '\').addService(googletag.pubads());' +
+                        'googletag.' + slotType + '(\'' + slot + '\', [' + size[0] + ',' + size[1] + '], \'' + dfp_id + '\').addService(googletag.pubads());' +
                         'googletag.display(\'' + dfp_id + '\');' +
                         '});';
                 d.appendChild(s);
