@@ -23,11 +23,11 @@
                     </td>
                     <td>                    
                         <label rel="width">Largura:</label>
-                        <input type="text" name="width" value="" required/>
+                        <input type="number" min="1" step="1" name="width" value="" required/>
                     </td>
                     <td>                    
                         <label rel="height">Altura:</label>
-                        <input type="text" name="height" value="" required/>
+                        <input type="number" min="1" step="1" name="height" value="" required/>
                     </td>
                     <td>                                        
                         <?php submit_button('Adicionar'); ?>
@@ -51,11 +51,11 @@
                         </td>
                         <td>
                             <label rel="width">Largura:</label>
-                            <input type="text" type="number" min="1" step="1" name="width" value="<?= $size->width ?>" required/>
+                            <input type="number" min="1" step="1" name="width" value="<?= $size->width ?>" required/>
                         </td>
                         <td>
                             <label rel="height">Altura:</label>
-                            <input type="text" type="number" min="1" step="1" name="height" value="<?= $size->height ?>" required/>
+                            <input type="number" min="1" step="1" name="height" value="<?= $size->height ?>" required/>
                         </td>
                         <td>
                             <?php submit_button('Salvar'); ?>                                                                
