@@ -22,7 +22,6 @@ var DFP = {
         if (w >= min_width && (max_width === '0' || w <= max_width)) {
             if (size[0] <= w && size[1] <= h) {
                 var d = document.createElement('div'),
-                        c = document.createElement('div'),
                         s = document.createElement('script'),
                         b = document.getElementsByTagName("body")[0];
                 s.setAttribute('type', 'text/javascript');
@@ -41,13 +40,9 @@ var DFP = {
                             'googletag.defineOutOfPageSlot(\'' + slot + '\', \'' + dfp_id + '\').addService(googletag.pubads());' +
                             'googletag.display(\'' + dfp_id + '\');' +
                             '});';
-                    //d.setAttribute('style', 'width:' + size[0] + 'px; height:' + size[1] + 'px;');
                     d.appendChild(s);
                     b.insertAdjacentHTML('afterbegin', '<!-- ' + slot + ' -->');
-                    //c.appendChild(d);
-                    //d.classList.add('wraper-dhtml');
-                    //d.classList.add('dfp');                    
-                    b.insertBefore(s, b.firstChild.nextSibling);
+                    b.insertBefore(d, b.firstChild.nextSibling);
 
                 }
             }
