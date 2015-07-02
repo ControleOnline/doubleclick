@@ -41,6 +41,7 @@ var DFP = {
                             'googletag.display(\'' + dfp_id + '\');' +
                             '});';
                     d.appendChild(s);
+                    d.classList.add('dhtml-container');
                     b.insertAdjacentHTML('afterbegin', '<!-- ' + slot + ' -->');
                     b.insertBefore(d, b.firstChild.nextSibling);
 
