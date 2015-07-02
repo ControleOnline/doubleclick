@@ -27,11 +27,11 @@ class WPDoubleClick {
         self::getResolver(self::$render);
         self::activateDoubleClick();
         if (is_admin()) {
-            wp_enqueue_script('DoubleClick', plugins_url('../public/js/vendor/ControleOnline/admin.js', dirname(__FILE__)));
+            wp_enqueue_script('DoubleClickAdmin', plugins_url('../public/js/vendor/ControleOnline/admin.js', dirname(__FILE__)));
             wp_enqueue_style('DoubleClick', plugins_url('../public/css/vendor/ControleOnline/admin.css', dirname(__FILE__)));
             add_action('admin_menu', array('\DoubleClick\WPDoubleClick', 'menu'));
         }
-        wp_enqueue_script('DoubleClick', plugins_url('../public/js/vendor/ControleOnline/dfp.js', dirname(__FILE__)));
+        wp_enqueue_script('DoubleClick', plugins_url('../public/js/vendor/ControleOnline/dfp.js', dirname(__FILE__)));        
         add_action('widgets_init', create_function('', 'return register_widget("\DoubleClick\Helper\Widget");'));
     }
 
