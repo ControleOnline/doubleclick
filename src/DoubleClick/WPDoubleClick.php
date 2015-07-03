@@ -20,8 +20,7 @@ class WPDoubleClick {
     protected static $mySiteOptions = array();
 
     public static function init($wpdb) {
-        self::$wpdb = $wpdb;
-        self::setTablePrefix();
+        self::$wpdb = $wpdb;        
         self::$render = new PhpRenderer();
         self::$options = self::getOptions();
         self::getResolver(self::$render);
@@ -72,17 +71,9 @@ class WPDoubleClick {
             }
         }
     }
-
-    private static function setTablePrefix() {
-        $blog_id = get_current_blog_id();
-        self::$wpdb->prefix = self::$wpdb->prefix . ($blog_id > 1 ? $blog_id . '_' : '');
-        self::$wpdb->base_prefix = self::$wpdb->prefix;
-    }
-
     public static function activateDoubleClick() {
         global $wpdb;
-        self::$wpdb = $wpdb;
-        self::setTablePrefix();
+        self::$wpdb = $wpdb;        
 
         $charset_collate = self::$wpdb->get_charset_collate();
         $table_name = self::$wpdb->prefix . 'dfp_sizes';

@@ -1,7 +1,12 @@
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
 var DFP = {
-    init: function () {
+    __construct: (function () {
+        document.addEventListener("DOMContentLoaded", function () {
+            DFP.run();
+        });
+    })(),
+    run: function () {
         var gads = document.createElement('script');
         gads.async = true;
         gads.type = 'text/javascript';
@@ -51,6 +56,3 @@ var DFP = {
         }
     }
 };
-document.addEventListener("DOMContentLoaded", function () {
-    DFP.init();
-});
