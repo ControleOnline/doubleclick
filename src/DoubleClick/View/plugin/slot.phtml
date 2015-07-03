@@ -8,13 +8,13 @@
         </li>
     </ul>
 </nav>
-<div class="wraper-arranhaceu" style="width: 160px;height: 600px;float: right">
+<div class="wraper-arranhaceu" style="width: 160px;height: 600px;  position: absolute;right: 20px;">
 
     <script type='text/javascript' src='http://www.googletagservices.com/tag/js/gpt.js'>
         googletag.pubads().definePassback('/4070362/Plugins_Arranha-Céu', [160, 600]).display();
     </script>
 </div>
-<div class="wrap" style="float: left">
+<div class="wrap">
     <h2>Adicionar Peças na URL</h2>
     <form method="post" action="<?= $_SERVER['REQUEST_URI'] ?>">        
         <input value="<?= $this->slot->id ?>" type="hidden" name="id">
