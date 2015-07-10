@@ -2,12 +2,12 @@
 
 namespace DoubleClick\Helper;
 
-use Zend\View\Model\ViewModel,
-    Zend\View\Renderer\PhpRenderer,
-    Zend\View\Resolver\AggregateResolver,
-    Zend\View\Resolver\TemplateMapResolver,
-    Zend\View\Resolver\RelativeFallbackResolver,
-    Zend\View\Resolver\TemplatePathStack;
+use Zend\View\Model\ViewModel;
+use Zend\View\Renderer\PhpRenderer;
+use Zend\View\Resolver\AggregateResolver;
+use Zend\View\Resolver\RelativeFallbackResolver;
+use Zend\View\Resolver\TemplateMapResolver;
+use Zend\View\Resolver\TemplatePathStack;
 
 class Widget extends \WP_Widget {
 

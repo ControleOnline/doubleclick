@@ -3,4 +3,4 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/ControleOnline/doubleclick/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ControleOnline/doubleclick/)
 [![Build Status](https://scrutinizer-ci.com/g/ControleOnline/doubleclick/badges/build.png?b=master)](https://scrutinizer-ci.com/g/ControleOnline/doubleclick/)
 
-[Download plugin](https://wordpress.org/plugins/doubleclick/)
+[Download plugin](https://wordpress.org/plugins/double-click/)
