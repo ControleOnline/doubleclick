@@ -34,8 +34,9 @@ class WPDoubleClick {
             add_action('admin_menu', array('\DoubleClick\WPDoubleClick', 'menu'));
         }
         wp_enqueue_style('DoubleClick', plugins_url('../public/css/vendor/ControleOnline/dfp.css', dirname(__FILE__)));
-        add_action('widgets_init', create_function('', 'return register_widget("\DoubleClick\Helper\Widget");'));
         wp_enqueue_script('DoubleClickAdmin', plugins_url('../public/js/vendor/ControleOnline/dfp.js', dirname(__FILE__)));
+        add_action('widgets_init', create_function('', 'return register_widget("\DoubleClick\Helper\Widget");'));
+        add_action('init', array('\DoubleClick\Helper\AdBlock', 'count'));
     }
 
     protected static function getOptions($force = false) {
@@ -142,7 +143,7 @@ UNIQUE KEY slot (slot_id,taxonomy_id,taxonomy_type)
             case 'slot':
                 Options::addSlots();
                 $id = filter_input(INPUT_GET, 'id');
-                if ($id) {
+                if ($id) {                    
                     self::$options['slot'] = Options::getSlot($id);
                     self::$options['categories'] = Options::getTaxonomy($id, 'category');
                     self::$options['pages'] = Options::getTaxonomy($id, 'page');
@@ -156,6 +157,7 @@ UNIQUE KEY slot (slot_id,taxonomy_id,taxonomy_type)
                 echo self::getPage('dfpSizes', self::$options);
                 break;
             default:
+                self::$options['AdBlockCount'] = (int) get_option('AdBlockCount');
                 self::$options['slots'] = Options::getSlots();
                 echo self::getPage('options', self::$options);
                 break;
