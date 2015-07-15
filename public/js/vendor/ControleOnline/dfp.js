@@ -169,7 +169,7 @@ var DFP = {
                 '&r="' + '+encodeURIComponent(document.location.pathname)+"' +
                 '&_="' + '+(new Date().getTime() / 1000), true);' +
                 'xmlhttp.send();' +
-                'if (typeof _gaq !== \'undefined\') {' +
+                'if (typeof _gaq !== \'undefined\') {' +                
                 '_gaq.push([\'_trackEvent\', \'Adblock\', \'Blocked\', \'Ads\',  ' + this.countAds + ', true]);' +
                 '}' +
                 '}' +
